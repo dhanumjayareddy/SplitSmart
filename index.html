@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SplitSmart — Split Bills with Rewards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+:root,[data-theme="light"]{
+  --color-bg:#f4f6fb;
+  --color-surface:#ffffff;
+  --color-surface-2:#f8f9fc;
+  --color-surface-offset:#eef0f6;
+  --color-divider:#e2e5ef;
+  --color-border:#d8dceb;
+  --color-text:#1a1d2e;
+  --color-text-muted:#6b7290;
+  --color-text-faint:#a8adc4;
+  --color-primary:#4f46e5;
+  --color-primary-hover:#4338ca;
+  --color-primary-light:#ede9fe;
+  --color-success:#16a34a;
+  --color-success-light:#dcfce7;
+  --color-warning:#d97706;
+  --color-warning-light:#fef3c7;
+  --color-error:#dc2626;
+  --color-error-light:#fee2e2;
+  --color-gold:#ca8a04;
+  --color-gold-light:#fef9c3;
+  --color-purple:#7c3aed;
+  --color-purple-light:#ede9fe;
+  --color-teal:#0d9488;
+  --color-teal-light:#ccfbf1;
+  --radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-xl:20px;--radius-full:9999px;
+  --shadow-sm:0 1px 3px rgba(79,70,229,0.08);
+  --shadow-md:0 4px 16px rgba(79,70,229,0.12);
+  --shadow-lg:0 12px 40px rgba(79,70,229,0.16);
+  --font-body:'Plus Jakarta Sans',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --text-xs:0.75rem;--text-sm:0.875rem;--text-base:1rem;
+  --text-lg:1.125rem;--text-xl:1.375rem;--text-2xl:1.75rem;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;
+  --space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;
+  --transition:180ms cubic-bezier(0.16,1,0.3,1);
+}
+[data-theme="dark"]{
+  --color-bg:#0f1117;--color-surface:#1a1d2e;--color-surface-2:#1f2336;
+  --color-surface-offset:#252840;--color-divider:#2d3155;--color-border:#3a3f6b;
+  --color-text:#e8eaf6;--color-text-muted:#8890b8;--color-text-faint:#4a5080;
+  --color-primary:#818cf8;--color-primary-hover:#a5b4fc;--color-primary-light:#1e1b4b;
+  --color-success:#4ade80;--color-success-light:#14532d;
+  --color-warning:#fbbf24;--color-warning-light:#451a03;
+  --color-error:#f87171;--color-error-light:#450a0a;
+  --color-gold:#fcd34d;--color-gold-light:#422006;
+  --color-purple:#c084fc;--color-purple-light:#2e1065;
+  --color-teal:#2dd4bf;--color-teal-light:#042f2e;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:none;text-size-adjust:none;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);min-height:100dvh;overflow-x:hidden}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+input,select,textarea{font:inherit;color:inherit}
+img{display:block;max-width:100%}
+a,button,[role="button"]{transition:color var(--transition),background var(--transition),border-color var(--transition),box-shadow var(--transition),transform var(--transition)}
+
+/* ===== PHONE SHELL ===== */
+.app-wrapper{display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:var(--space-8) var(--space-4);background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+.phone{width:390px;min-height:844px;background:var(--color-bg);border-radius:48px;overflow:hidden;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.4),0 0 0 12px rgba(255,255,255,0.08);display:flex;flex-direction:column}
+.phone-notch{height:44px;background:var(--color-surface);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.notch-island{width:120px;height:34px;background:#0f1117;border-radius:0 0 22px 22px;display:flex;align-items:center;justify-content:space-between;padding:0 14px}
+.notch-camera{width:12px;height:12px;border-radius:50%;background:#1a1a2e;border:2px solid #333}
+.notch-speaker{width:50px;height:5px;background:#1a1a2e;border-radius:3px}
+.phone-screen{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;position:relative}
+.phone-screen::-webkit-scrollbar{display:none}
+.phone-home-bar{height:34px;background:var(--color-bg);display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;flex-shrink:0}
+.home-bar-line{width:134px;height:5px;background:var(--color-text);opacity:0.2;border-radius:3px}
+
+/* ===== VIEWS ===== */
+.view{display:none;flex-direction:column;min-height:100%;animation:fadeIn 0.25s ease}
+.view.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== TOP BAR ===== */
+.topbar{padding:var(--space-5) var(--space-5) var(--space-3);display:flex;align-items:center;justify-content:space-between;background:var(--color-surface);position:sticky;top:0;z-index:10;border-bottom:1px solid var(--color-divider)}
+.topbar-logo{display:flex;align-items:center;gap:var(--space-2)}
+.logo-icon{width:32px;height:32px;background:var(--color-primary);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white}
+.logo-name{font-size:var(--text-lg);font-weight:800;color:var(--color-text);letter-spacing:-0.5px}
+.logo-name span{color:var(--color-primary)}
+.topbar-actions{display:flex;align-items:center;gap:var(--space-3)}
+.icon-btn{width:36px;height:36px;border-radius:50%;background:var(--color-surface-offset);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted);position:relative}
+.icon-btn:active{transform:scale(0.9)}
+.badge{position:absolute;top:-2px;right:-2px;width:16px;height:16px;background:var(--color-error);border-radius:50%;font-size:10px;color:white;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid var(--color-surface)}
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav{display:flex;background:var(--color-surface);border-top:1px solid var(--color-divider);position:sticky;bottom:0;z-index:10;padding:var(--space-2) var(--space-2) var(--space-1)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:var(--space-2);border-radius:var(--radius-md);font-size:10px;font-weight:600;color:var(--color-text-faint);cursor:pointer;transition:all var(--transition)}
+.nav-item.active{color:var(--color-primary)}
+.nav-item:active{transform:scale(0.92)}
+.nav-item svg{width:22px;height:22px}
+.nav-fab{width:52px;height:52px;background:var(--color-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;margin-top:-20px;box-shadow:var(--shadow-md);flex-shrink:0}
+.nav-fab:active{transform:scale(0.9)}
+
+/* ===== WALLET CARD ===== */
+.wallet-section{padding:var(--space-5);background:var(--color-surface)}
+.wallet-card{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 60%,#a855f7 100%);border-radius:var(--radius-xl);padding:var(--space-6);color:white;position:relative;overflow:hidden}
+.wallet-card::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.07)}
+.wallet-card::after{content:'';position:absolute;bottom:-60px;left:-30px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.05)}
+.wallet-label{font-size:var(--text-xs);font-weight:600;opacity:0.75;letter-spacing:1px;text-transform:uppercase;margin-bottom:var(--space-2)}
+.wallet-balance{font-size:2.5rem;font-weight:800;letter-spacing:-1px;font-family:var(--font-mono);margin-bottom:var(--space-5)}
+.wallet-balance .currency{font-size:1.2rem;opacity:0.75;vertical-align:top;margin-top:6px;display:inline-block}
+.wallet-row{display:flex;align-items:center;justify-content:space-between}
+.wallet-points{display:flex;align-items:center;gap:var(--space-2);background:rgba(255,255,255,0.15);border-radius:var(--radius-full);padding:var(--space-2) var(--space-3)}
+.wallet-points svg{width:16px;height:16px}
+.wallet-points span{font-size:var(--text-sm);font-weight:700}
+.wallet-actions{display:flex;gap:var(--space-2)}
+.wallet-action-btn{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);border-radius:var(--radius-full);padding:6px 14px;font-size:var(--text-xs);font-weight:700;color:white;display:flex;align-items:center;gap:4px}
+.wallet-action-btn svg{width:13px;height:13px}
+.wallet-action-btn:active{background:rgba(255,255,255,0.3)}
+
+/* ===== STATS ROW ===== */
+.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-3);padding:var(--space-5);padding-top:var(--space-4)}
+.stat-card{background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4);text-align:center;box-shadow:var(--shadow-sm)}
+.stat-value{font-size:var(--text-lg);font-weight:800;font-family:var(--font-mono);margin-bottom:2px}
+.stat-label{font-size:10px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.stat-green{color:var(--color-success)}
+.stat-red{color:var(--color-error)}
+.stat-orange{color:var(--color-warning)}
+
+/* ===== SECTION ===== */
+.section{padding:0 var(--space-5) var(--space-5)}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3)}
+.section-title{font-size:var(--text-base);font-weight:700;color:var(--color-text)}
+.see-all{font-size:var(--text-xs);font-weight:600;color:var(--color-primary)}
+
+/* ===== CARDS ===== */
+.card{background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-3);box-shadow:var(--shadow-sm);border:1px solid var(--color-border)}
+.card:active{transform:scale(0.98)}
+.expense-item{display:flex;align-items:center;gap:var(--space-3)}
+.expense-icon{width:44px;height:44px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem}
+.expense-info{flex:1;min-width:0}
+.expense-name{font-size:var(--text-sm);font-weight:700;color:var(--color-text);margin-bottom:2px}
+.expense-meta{font-size:var(--text-xs);color:var(--color-text-muted)}
+.expense-amount{text-align:right;flex-shrink:0}
+.amount-you-owe{color:var(--color-error);font-size:var(--text-sm);font-weight:800;font-family:var(--font-mono)}
+.amount-owed{color:var(--color-success);font-size:var(--text-sm);font-weight:800;font-family:var(--font-mono)}
+.amount-settled{color:var(--color-text-faint);font-size:var(--text-sm);font-weight:600;font-family:var(--font-mono)}
+.due-badge{font-size:10px;font-weight:600;padding:2px 6px;border-radius:var(--radius-full);display:inline-block;margin-top:2px}
+.badge-overdue{background:var(--color-error-light);color:var(--color-error)}
+.badge-due-soon{background:var(--color-warning-light);color:var(--color-warning)}
+.badge-settled{background:var(--color-success-light);color:var(--color-success)}
+.badge-paid-early{background:var(--color-teal-light);color:var(--color-teal)}
+
+/* ===== INTEREST ALERT ===== */
+.interest-alert{background:linear-gradient(135deg,var(--color-error-light),#fef2f2);border:1px solid rgba(220,38,38,0.2);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-3);display:flex;gap:var(--space-3);align-items:flex-start}
+.interest-alert svg{color:var(--color-error);flex-shrink:0;margin-top:2px}
+.interest-alert-title{font-size:var(--text-sm);font-weight:700;color:var(--color-error);margin-bottom:2px}
+.interest-alert-text{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.5}
+
+/* ===== REWARD BANNER ===== */
+.reward-banner{background:linear-gradient(135deg,#fef9c3,#fef3c7);border:1px solid rgba(202,138,4,0.25);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-3);display:flex;gap:var(--space-3);align-items:center}
+.reward-banner svg{color:var(--color-gold);flex-shrink:0}
+.reward-banner-title{font-size:var(--text-sm);font-weight:700;color:var(--color-gold)}
+.reward-banner-text{font-size:var(--text-xs);color:var(--color-text-muted)}
+
+/* ===== GROUP LIST ===== */
+.group-item{display:flex;align-items:center;gap:var(--space-3)}
+.group-avatar{width:44px;height:44px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.group-info{flex:1;min-width:0}
+.group-name{font-size:var(--text-sm);font-weight:700;color:var(--color-text)}
+.group-members{font-size:var(--text-xs);color:var(--color-text-muted)}
+.group-balance{text-align:right;font-size:var(--text-sm);font-weight:800;font-family:var(--font-mono)}
+
+/* ===== ACTIVITY ===== */
+.activity-item{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-3)}
+.activity-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.activity-content{flex:1}
+.activity-text{font-size:var(--text-xs);color:var(--color-text);line-height:1.5}
+.activity-text strong{color:var(--color-text)}
+.activity-time{font-size:10px;color:var(--color-text-faint);margin-top:2px}
+.activity-amount{font-size:var(--text-sm);font-weight:700;font-family:var(--font-mono)}
+
+/* ===== BUTTONS ===== */
+.btn-primary{background:var(--color-primary);color:white;border-radius:var(--radius-full);padding:14px var(--space-6);font-size:var(--text-sm);font-weight:700;display:flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;box-shadow:0 4px 16px rgba(79,70,229,0.3)}
+.btn-primary:active{transform:scale(0.97);background:var(--color-primary-hover)}
+.btn-success{background:var(--color-success);color:white;border-radius:var(--radius-full);padding:12px var(--space-5);font-size:var(--text-sm);font-weight:700;display:flex;align-items:center;gap:var(--space-2);box-shadow:0 4px 12px rgba(22,163,74,0.3)}
+.btn-success:active{transform:scale(0.97)}
+.btn-outline{background:transparent;border:2px solid var(--color-border);color:var(--color-text-muted);border-radius:var(--radius-full);padding:12px var(--space-5);font-size:var(--text-sm);font-weight:600;display:flex;align-items:center;gap:var(--space-2)}
+.btn-outline:active{background:var(--color-surface-offset)}
+
+/* ===== FORM ===== */
+.form-group{margin-bottom:var(--space-5)}
+.form-label{font-size:var(--text-sm);font-weight:600;color:var(--color-text-muted);margin-bottom:var(--space-2);display:block}
+.form-input{width:100%;background:var(--color-surface-offset);border:1.5px solid var(--color-border);border-radius:var(--radius-md);padding:14px var(--space-4);font-size:var(--text-base);font-weight:500;color:var(--color-text);outline:none;transition:border-color var(--transition)}
+.form-input:focus{border-color:var(--color-primary);background:var(--color-surface)}
+.form-select{width:100%;background:var(--color-surface-offset);border:1.5px solid var(--color-border);border-radius:var(--radius-md);padding:14px var(--space-4);font-size:var(--text-base);font-weight:500;color:var(--color-text);outline:none;appearance:none}
+.amount-input-wrap{position:relative}
+.amount-input-wrap .currency-sym{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:var(--text-lg);font-weight:700;color:var(--color-primary)}
+.amount-input-wrap input{padding-left:36px;font-size:var(--text-xl);font-weight:800;font-family:var(--font-mono)}
+
+/* ===== FRIEND CHIPS ===== */
+.friend-chips{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-2)}
+.friend-chip{display:flex;align-items:center;gap:var(--space-2);background:var(--color-primary-light);border-radius:var(--radius-full);padding:6px 12px;font-size:var(--text-xs);font-weight:600;color:var(--color-primary);cursor:pointer}
+.friend-chip.selected{background:var(--color-primary);color:white}
+.friend-chip .avatar{width:20px;height:20px;border-radius:50%;background:var(--color-primary);color:white;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800}
+.friend-chip.selected .avatar{background:rgba(255,255,255,0.3)}
+
+/* ===== SPLIT OPTIONS ===== */
+.split-options{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-2)}
+.split-option{background:var(--color-surface-offset);border:2px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-3);text-align:center;cursor:pointer;transition:all var(--transition)}
+.split-option.selected{background:var(--color-primary-light);border-color:var(--color-primary)}
+.split-option svg{width:20px;height:20px;color:var(--color-text-muted);margin:0 auto var(--space-1)}
+.split-option.selected svg{color:var(--color-primary)}
+.split-option span{font-size:10px;font-weight:600;color:var(--color-text-muted);display:block}
+.split-option.selected span{color:var(--color-primary)}
+
+/* ===== INTEREST INFO BOX ===== */
+.info-box{background:var(--color-surface-offset);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-4)}
+.info-box-title{font-size:var(--text-xs);font-weight:700;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:var(--space-3)}
+.info-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-2)}
+.info-row:last-child{margin-bottom:0;border-top:1px solid var(--color-divider);padding-top:var(--space-2);margin-top:var(--space-2)}
+.info-key{font-size:var(--text-xs);color:var(--color-text-muted)}
+.info-val{font-size:var(--text-sm);font-weight:700;font-family:var(--font-mono)}
+.info-val.danger{color:var(--color-error)}
+.info-val.success{color:var(--color-success)}
+.info-val.primary{color:var(--color-primary)}
+
+/* ===== POINTS SECTION ===== */
+.points-card{background:linear-gradient(135deg,#92400e,#d97706,#fbbf24);border-radius:var(--radius-xl);padding:var(--space-5);color:white;position:relative;overflow:hidden;margin-bottom:var(--space-4)}
+.points-card::before{content:'⭐';font-size:80px;position:absolute;right:-10px;top:-10px;opacity:0.15}
+.points-title{font-size:var(--text-xs);font-weight:600;opacity:0.8;letter-spacing:1px;text-transform:uppercase;margin-bottom:var(--space-1)}
+.points-value{font-size:2.5rem;font-weight:800;font-family:var(--font-mono);letter-spacing:-1px;margin-bottom:var(--space-1)}
+.points-sub{font-size:var(--text-xs);opacity:0.75}
+.points-tier{display:inline-flex;align-items:center;gap:var(--space-2);background:rgba(255,255,255,0.2);border-radius:var(--radius-full);padding:4px 12px;margin-top:var(--space-3);font-size:var(--text-xs);font-weight:700}
+
+/* ===== REWARDS LIST ===== */
+.reward-item{display:flex;align-items:center;gap:var(--space-3)}
+.reward-icon{width:48px;height:48px;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.reward-info{flex:1}
+.reward-name{font-size:var(--text-sm);font-weight:700;color:var(--color-text);margin-bottom:2px}
+.reward-pts{font-size:var(--text-xs);color:var(--color-text-muted)}
+.reward-btn{background:var(--color-gold-light);color:var(--color-gold);border:1.5px solid rgba(202,138,4,0.3);border-radius:var(--radius-full);padding:6px 14px;font-size:var(--text-xs);font-weight:700;flex-shrink:0}
+.reward-btn:disabled{opacity:0.4;cursor:not-allowed}
+.reward-btn:active:not(:disabled){transform:scale(0.95)}
+
+/* ===== INTEREST RATE DISPLAY ===== */
+.rate-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);margin-bottom:var(--space-4)}
+.rate-card{background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4);box-shadow:var(--shadow-sm);text-align:center;border:1px solid var(--color-border)}
+.rate-emoji{font-size:1.8rem;margin-bottom:var(--space-2)}
+.rate-label{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;margin-bottom:var(--space-1)}
+.rate-value{font-size:var(--text-xl);font-weight:800;font-family:var(--font-mono)}
+.rate-value.danger{color:var(--color-error)}
+.rate-value.success{color:var(--color-success)}
+.rate-desc{font-size:10px;color:var(--color-text-faint);margin-top:2px}
+
+/* ===== DETAIL VIEW ===== */
+.detail-hero{background:var(--color-surface);padding:var(--space-6) var(--space-5) var(--space-5);text-align:center;border-bottom:1px solid var(--color-divider)}
+.detail-emoji{font-size:3rem;margin-bottom:var(--space-3)}
+.detail-name{font-size:var(--text-xl);font-weight:800;margin-bottom:var(--space-2)}
+.detail-amount{font-size:2rem;font-weight:800;font-family:var(--font-mono)}
+.detail-tags{display:flex;gap:var(--space-2);justify-content:center;margin-top:var(--space-3);flex-wrap:wrap}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:none;align-items:flex-end;animation:fadeIn 0.2s ease}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:var(--color-surface);border-radius:var(--radius-xl) var(--radius-xl) 0 0;padding:var(--space-6);width:100%;max-height:85vh;overflow-y:auto;animation:slideUp 0.3s cubic-bezier(0.16,1,0.3,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--color-border);border-radius:2px;margin:0 auto var(--space-5)}
+.modal-title{font-size:var(--text-lg);font-weight:800;margin-bottom:var(--space-5);text-align:center}
+
+/* ===== SUCCESS TOAST ===== */
+.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--color-success);color:white;border-radius:var(--radius-full);padding:12px 24px;font-size:var(--text-sm);font-weight:700;display:flex;align-items:center;gap:var(--space-2);z-index:200;opacity:0;transition:all 0.3s ease;white-space:nowrap;box-shadow:var(--shadow-lg)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== EMPTY STATE ===== */
+.empty-state{text-align:center;padding:var(--space-10) var(--space-6);color:var(--color-text-faint)}
+.empty-state-icon{font-size:3rem;margin-bottom:var(--space-4)}
+.empty-state h3{font-size:var(--text-base);font-weight:700;color:var(--color-text-muted);margin-bottom:var(--space-2)}
+.empty-state p{font-size:var(--text-sm);line-height:1.6;max-width:30ch;margin:0 auto}
+
+/* ===== PROFILE HEADER ===== */
+.profile-header{background:var(--color-surface);padding:var(--space-6) var(--space-5);text-align:center;border-bottom:1px solid var(--color-divider)}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-purple));display:flex;align-items:center;justify-content:center;margin:0 auto var(--space-3);font-size:2rem;color:white;font-weight:800;border:4px solid var(--color-surface-2);box-shadow:var(--shadow-md)}
+.profile-name{font-size:var(--text-xl);font-weight:800;margin-bottom:4px}
+.profile-email{font-size:var(--text-xs);color:var(--color-text-muted)}
+
+/* ===== SETTINGS LIST ===== */
+.settings-list{background:var(--color-surface);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--color-border);margin-bottom:var(--space-4)}
+.settings-item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--color-divider);cursor:pointer}
+.settings-item:last-child{border-bottom:none}
+.settings-item:active{background:var(--color-surface-offset)}
+.settings-icon{width:36px;height:36px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.settings-item-info{flex:1}
+.settings-item-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text)}
+.settings-item-sub{font-size:var(--text-xs);color:var(--color-text-muted)}
+.settings-item svg.arrow{color:var(--color-text-faint);width:18px;height:18px}
+
+/* ===== TIMELINE ===== */
+.timeline{padding-left:var(--space-6);position:relative}
+.timeline::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;background:var(--color-divider)}
+.timeline-item{position:relative;margin-bottom:var(--space-4)}
+.timeline-dot{position:absolute;left:-23px;width:12px;height:12px;border-radius:50%;border:2px solid var(--color-surface);top:4px}
+.timeline-dot.green{background:var(--color-success)}
+.timeline-dot.red{background:var(--color-error)}
+.timeline-dot.blue{background:var(--color-primary)}
+.timeline-dot.gold{background:var(--color-gold)}
+.timeline-content{background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);box-shadow:var(--shadow-sm);border:1px solid var(--color-border)}
+.timeline-title{font-size:var(--text-xs);font-weight:700;color:var(--color-text);margin-bottom:2px}
+.timeline-sub{font-size:10px;color:var(--color-text-faint)}
+.timeline-amount{font-size:var(--text-sm);font-weight:800;font-family:var(--font-mono)}
+
+/* ===== PAGE HEADER ===== */
+.page-header{padding:var(--space-5) var(--space-5) var(--space-4);background:var(--color-surface);border-bottom:1px solid var(--color-divider)}
+.page-header-inner{display:flex;align-items:center;gap:var(--space-3)}
+.back-btn{width:36px;height:36px;border-radius:50%;background:var(--color-surface-offset);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted)}
+.back-btn:active{transform:scale(0.9)}
+.page-title{font-size:var(--text-lg);font-weight:800}
+
+/* ===== TOGGLE SWITCH ===== */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-5);background:var(--color-surface);border-radius:var(--radius-lg);border:1px solid var(--color-border);margin-bottom:var(--space-3)}
+.toggle-info{flex:1}
+.toggle-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text)}
+.toggle-desc{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:2px}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--color-border);border-radius:var(--radius-full);cursor:pointer;transition:background 0.3s}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;border-radius:50%;background:white;transition:transform 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+.toggle input:checked + .toggle-slider{background:var(--color-primary)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(20px)}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar{background:var(--color-surface-offset);border-radius:var(--radius-full);height:6px;overflow:hidden;margin-top:var(--space-2)}
+.progress-fill{height:100%;border-radius:var(--radius-full);background:linear-gradient(90deg,var(--color-primary),var(--color-purple));transition:width 0.6s cubic-bezier(0.16,1,0.3,1)}
+
+/* ===== CONFETTI ===== */
+.confetti-piece{position:fixed;pointer-events:none;z-index:999;border-radius:2px;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotateZ(0deg);opacity:1}100%{transform:translateY(100vh) rotateZ(720deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<div class="app-wrapper">
+<div class="phone">
+
+<!-- NOTCH -->
+<div class="phone-notch">
+  <div class="notch-island">
+    <div class="notch-camera"></div>
+    <div class="notch-speaker"></div>
+    <div class="notch-camera"></div>
+  </div>
+</div>
+
+<!-- SCREEN -->
+<div class="phone-screen" id="mainScreen">
+
+<!-- ===== HOME VIEW ===== -->
+<div class="view active" id="view-home">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="logo-name">Split<span>Smart</span></span>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="showToast('Search coming soon!')">
+        <i data-lucide="search" style="width:18px;height:18px"></i>
+      </button>
+      <button class="icon-btn" onclick="openNotifications()">
+        <i data-lucide="bell" style="width:18px;height:18px"></i>
+        <span class="badge">3</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Wallet Card -->
+  <div class="wallet-section">
+    <div class="wallet-card">
+      <div class="wallet-label">💳 SplitSmart Wallet</div>
+      <div class="wallet-balance"><span class="currency">₹</span><span id="walletBalance">4,280</span></div>
+      <div class="wallet-row">
+        <div class="wallet-points">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span id="totalPoints">2,450 pts</span>
+        </div>
+        <div class="wallet-actions">
+          <button class="wallet-action-btn" onclick="openAddFunds()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add
+          </button>
+          <button class="wallet-action-btn" onclick="showToast('Withdrawal initiated!')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Withdraw
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value stat-red">₹1,840</div>
+      <div class="stat-label">You Owe</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value stat-green">₹3,200</div>
+      <div class="stat-label">Owed to You</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value stat-orange">₹120</div>
+      <div class="stat-label">Interest Due</div>
+    </div>
+  </div>
+
+  <!-- Interest Alert -->
+  <div class="section">
+    <div class="interest-alert">
+      <i data-lucide="alert-triangle" style="width:18px;height:18px"></i>
+      <div>
+        <div class="interest-alert-title">⚠️ Interest Accruing on 2 Bills</div>
+        <div class="interest-alert-text">Rahul owes ₹800 (12 days overdue) — ₹9.60 interest added. Pay now to stop accumulation.</div>
+      </div>
+    </div>
+
+    <div class="reward-banner">
+      <i data-lucide="zap" style="width:20px;height:20px"></i>
+      <div>
+        <div class="reward-banner-title">🎉 Early Payment Bonus!</div>
+        <div class="reward-banner-text">Pay Priya's ₹560 today — earn 50 bonus pts + ₹28 cashback!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Expenses -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Recent Expenses</span>
+      <button class="see-all" onclick="navigateTo('groups')">See all</button>
+    </div>
+
+    <div class="card" onclick="openExpenseDetail()">
+      <div class="expense-item">
+        <div class="expense-icon" style="background:#fef3c7">🍕</div>
+        <div class="expense-info">
+          <div class="expense-name">Dinner at Farzi Café</div>
+          <div class="expense-meta">with Rahul, Priya, Amit • 3 days ago</div>
+          <span class="due-badge badge-overdue">12 days overdue</span>
+        </div>
+        <div class="expense-amount">
+          <div class="amount-you-owe">-₹480</div>
+          <div style="font-size:10px;color:var(--color-error);text-align:right">+₹5.76 int.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" onclick="openExpenseDetail()">
+      <div class="expense-item">
+        <div class="expense-icon" style="background:#dcfce7">🏠</div>
+        <div class="expense-info">
+          <div class="expense-name">Monthly Rent Split</div>
+          <div class="expense-meta">with Priya • due in 5 days</div>
+          <span class="due-badge badge-due-soon">Due soon</span>
+        </div>
+        <div class="expense-amount">
+          <div class="amount-you-owe">-₹1,360</div>
+          <div style="font-size:10px;color:var(--color-teal);text-align:right">Pay early +80pts</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="expense-item">
+        <div class="expense-icon" style="background:#ede9fe">✈️</div>
+        <div class="expense-info">
+          <div class="expense-name">Goa Trip Expenses</div>
+          <div class="expense-meta">you are owed • 1 day ago</div>
+          <span class="due-badge badge-settled">Fully settled</span>
+        </div>
+        <div class="expense-amount">
+          <div class="amount-owed">+₹3,200</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="expense-item">
+        <div class="expense-icon" style="background:#ccfbf1">🎮</div>
+        <div class="expense-info">
+          <div class="expense-name">PlayStation Subscription</div>
+          <div class="expense-meta">with Amit • paid 3 days early!</div>
+          <span class="due-badge badge-paid-early">Early payment ✓</span>
+        </div>
+        <div class="expense-amount">
+          <div class="amount-settled">₹450</div>
+          <div style="font-size:10px;color:var(--color-teal);text-align:right">+30 pts earned</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:20px"></div>
+</div>
+
+<!-- ===== GROUPS VIEW ===== -->
+<div class="view" id="view-groups">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <span class="logo-name">Groups</span>
+    </div>
+    <button class="icon-btn" onclick="openNewGroup()">
+      <i data-lucide="plus" style="width:18px;height:18px"></i>
+    </button>
+  </div>
+
+  <div class="section" style="padding-top:var(--space-5)">
+    <div class="card" onclick="openGroupDetail()">
+      <div class="group-item">
+        <div class="group-avatar" style="background:#fef3c7">🏠</div>
+        <div class="group-info">
+          <div class="group-name">Roommates</div>
+          <div class="group-members">Priya, Amit, You • 3 members</div>
+          <div style="margin-top:4px"><span class="due-badge badge-due-soon">₹1,360 pending</span></div>
+        </div>
+        <div class="group-balance" style="color:var(--color-error)">-₹1,360</div>
+      </div>
+    </div>
+
+    <div class="card" onclick="openGroupDetail()">
+      <div class="group-item">
+        <div class="group-avatar" style="background:#ede9fe">✈️</div>
+        <div class="group-info">
+          <div class="group-name">Goa Trip 2025</div>
+          <div class="group-members">Rahul, Priya, Neha, You • 4 members</div>
+          <div style="margin-top:4px"><span class="due-badge badge-settled">All settled</span></div>
+        </div>
+        <div class="group-balance" style="color:var(--color-success)">+₹3,200</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="group-item">
+        <div class="group-avatar" style="background:#fee2e2">🎮</div>
+        <div class="group-info">
+          <div class="group-name">Gaming Squad</div>
+          <div class="group-members">Amit, You • 2 members</div>
+          <div style="margin-top:4px"><span class="due-badge badge-overdue">₹480 overdue</span></div>
+        </div>
+        <div class="group-balance" style="color:var(--color-error)">-₹480</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="group-item">
+        <div class="group-avatar" style="background:#ccfbf1">🍔</div>
+        <div class="group-info">
+          <div class="group-name">Office Lunch Group</div>
+          <div class="group-members">Rahul, Neha, Vikram, You • 4 members</div>
+          <div style="margin-top:4px"><span class="due-badge badge-paid-early">You paid early!</span></div>
+        </div>
+        <div class="group-balance" style="color:var(--color-teal)">+₹240</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADD EXPENSE VIEW ===== -->
+<div class="view" id="view-add">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <span class="logo-name">Add Expense</span>
+    </div>
+    <button class="see-all" onclick="navigateTo('home')">Cancel</button>
+  </div>
+
+  <div style="padding:var(--space-5)">
+    <div class="form-group">
+      <label class="form-label">💸 Amount</label>
+      <div class="amount-input-wrap">
+        <span class="currency-sym">₹</span>
+        <input class="form-input" type="number" placeholder="0.00" id="expenseAmount" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">📝 Description</label>
+      <input class="form-input" type="text" placeholder="What's this for?" id="expenseDesc">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">🗂️ Category</label>
+      <select class="form-select" id="expenseCategory">
+        <option>🍕 Food & Dining</option>
+        <option>🏠 Rent & Housing</option>
+        <option>✈️ Travel</option>
+        <option>🎮 Entertainment</option>
+        <option>🛒 Groceries</option>
+        <option>💊 Healthcare</option>
+        <option>⚡ Utilities</option>
+        <option>📦 Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">📅 Due Date</label>
+      <input class="form-input" type="date" id="expenseDue" style="color-scheme:light">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">👥 Split with</label>
+      <div class="friend-chips">
+        <div class="friend-chip selected" onclick="toggleChip(this)">
+          <div class="avatar">R</div>Rahul
+        </div>
+        <div class="friend-chip" onclick="toggleChip(this)">
+          <div class="avatar">P</div>Priya
+        </div>
+        <div class="friend-chip" onclick="toggleChip(this)">
+          <div class="avatar">A</div>Amit
+        </div>
+        <div class="friend-chip" onclick="toggleChip(this)">
+          <div class="avatar">N</div>Neha
+        </div>
+        <div class="friend-chip" onclick="toggleChip(this)" style="background:var(--color-surface-offset);color:var(--color-text-muted)">
+          + Add
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">⚖️ Split type</label>
+      <div class="split-options">
+        <div class="split-option selected" onclick="selectSplit(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Equal</span>
+        </div>
+        <div class="split-option" onclick="selectSplit(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Custom</span>
+        </div>
+        <div class="split-option" onclick="selectSplit(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>% Based</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Box -->
+    <div class="info-box" id="expensePreview">
+      <div class="info-box-title">📊 Expense Summary</div>
+      <div class="info-row">
+        <span class="info-key">Total Amount</span>
+        <span class="info-val primary" id="previewTotal">₹0.00</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Your Share (1 of 2)</span>
+        <span class="info-val" id="previewShare">₹0.00</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Late Interest Rate</span>
+        <span class="info-val danger">1.5% / day after due</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">Early Pay Bonus</span>
+        <span class="info-val success">+10 pts per ₹100 + 2% cashback</span>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="addExpense()">
+      <i data-lucide="check" style="width:18px;height:18px"></i>
+      Add Expense
+    </button>
+  </div>
+</div>
+
+<!-- ===== REWARDS VIEW ===== -->
+<div class="view" id="view-rewards">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <span class="logo-name">Rewards</span>
+    </div>
+    <button class="icon-btn" onclick="showToast('Points history coming soon!')">
+      <i data-lucide="history" style="width:18px;height:18px"></i>
+    </button>
+  </div>
+
+  <div style="padding:var(--space-5)">
+    <!-- Points Card -->
+    <div class="points-card">
+      <div class="points-title">⭐ SmartPoints Balance</div>
+      <div class="points-value" id="rewardPoints">2,450</div>
+      <div class="points-sub">≈ ₹245 redeemable value</div>
+      <div class="points-tier">🥇 Gold Member • Tier 3</div>
+      <div style="margin-top:var(--space-3)">
+        <div style="display:flex;justify-content:space-between;font-size:10px;opacity:0.75;margin-bottom:4px">
+          <span>Gold → Platinum</span>
+          <span>2,450 / 5,000</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:49%"></div></div>
+      </div>
+    </div>
+
+    <!-- Rate Grid -->
+    <div class="rate-grid">
+      <div class="rate-card">
+        <div class="rate-emoji">⏰</div>
+        <div class="rate-label">Late Interest</div>
+        <div class="rate-value danger">1.5%</div>
+        <div class="rate-desc">per day after due date</div>
+      </div>
+      <div class="rate-card">
+        <div class="rate-emoji">🚀</div>
+        <div class="rate-label">Early Pay Bonus</div>
+        <div class="rate-value success">+10 pts</div>
+        <div class="rate-desc">per ₹100 paid early</div>
+      </div>
+      <div class="rate-card">
+        <div class="rate-emoji">💰</div>
+        <div class="rate-label">Cashback Rate</div>
+        <div class="rate-value" style="color:var(--color-teal)">2%</div>
+        <div class="rate-desc">on early payments</div>
+      </div>
+      <div class="rate-card">
+        <div class="rate-emoji">📅</div>
+        <div class="rate-label">Grace Period</div>
+        <div class="rate-value" style="color:var(--color-purple)">3 days</div>
+        <div class="rate-desc">before interest starts</div>
+      </div>
+    </div>
+
+    <!-- How to Earn -->
+    <div class="section-header">
+      <span class="section-title">How to Earn Points</span>
+    </div>
+    <div class="card" style="margin-bottom:var(--space-3)">
+      <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div style="display:flex;align-items:center;gap:var(--space-3)">
+          <div style="width:36px;height:36px;background:var(--color-teal-light);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.1rem">🚀</div>
+          <div style="flex:1"><div style="font-size:var(--text-sm);font-weight:700">Pay Early</div><div style="font-size:var(--text-xs);color:var(--color-text-muted)">+10 pts/₹100 + 2% cashback</div></div>
+          <div style="font-size:var(--text-sm);font-weight:800;color:var(--color-teal)">+10x</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-3)">
+          <div style="width:36px;height:36px;background:var(--color-primary-light);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.1rem">👥</div>
+          <div style="flex:1"><div style="font-size:var(--text-sm);font-weight:700">Add Friends</div><div style="font-size:var(--text-xs);color:var(--color-text-muted)">+100 pts per referral</div></div>
+          <div style="font-size:var(--text-sm);font-weight:800;color:var(--color-primary)">+100</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-3)">
+          <div style="width:36px;height:36px;background:var(--color-gold-light);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.1rem">📅</div>
+          <div style="flex:1"><div style="font-size:var(--text-sm);font-weight:700">On-Time Streak</div><div style="font-size:var(--text-xs);color:var(--color-text-muted)">5x streak = 500 bonus pts</div></div>
+          <div style="font-size:var(--text-sm);font-weight:800;color:var(--color-gold)">+500</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-3)">
+          <div style="width:36px;height:36px;background:var(--color-success-light);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.1rem">💳</div>
+          <div style="flex:1"><div style="font-size:var(--text-sm);font-weight:700">Add to Wallet</div><div style="font-size:var(--text-xs);color:var(--color-text-muted)">+5 pts per ₹100 added</div></div>
+          <div style="font-size:var(--text-sm);font-weight:800;color:var(--color-success)">+5x</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Redeem Rewards -->
+    <div class="section-header" style="margin-top:var(--space-2)">
+      <span class="section-title">Redeem Rewards</span>
+    </div>
+
+    <div class="card"><div class="reward-item">
+      <div class="reward-icon" style="background:#fef9c3">🎁</div>
+      <div class="reward-info"><div class="reward-name">₹50 Wallet Credit</div><div class="reward-pts">500 SmartPoints</div></div>
+      <button class="reward-btn" onclick="redeemReward(this,'₹50 Wallet Credit',500)">Redeem</button>
+    </div></div>
+
+    <div class="card"><div class="reward-item">
+      <div class="reward-icon" style="background:#ccfbf1">📦</div>
+      <div class="reward-info"><div class="reward-name">Free Month Premium</div><div class="reward-pts">1,000 SmartPoints</div></div>
+      <button class="reward-btn" onclick="redeemReward(this,'Free Month Premium',1000)">Redeem</button>
+    </div></div>
+
+    <div class="card"><div class="reward-item">
+      <div class="reward-icon" style="background:#ede9fe">✈️</div>
+      <div class="reward-info"><div class="reward-name">₹200 Travel Voucher</div><div class="reward-pts">2,000 SmartPoints</div></div>
+      <button class="reward-btn" onclick="redeemReward(this,'₹200 Travel Voucher',2000)">Redeem</button>
+    </div></div>
+
+    <div class="card"><div class="reward-item">
+      <div class="reward-icon" style="background:#fee2e2">🎬</div>
+      <div class="reward-info"><div class="reward-name">Movie Ticket (PVR)</div><div class="reward-pts">800 SmartPoints</div></div>
+      <button class="reward-btn" onclick="redeemReward(this,'Movie Ticket',800)">Redeem</button>
+    </div></div>
+  </div>
+</div>
+
+<!-- ===== PROFILE VIEW ===== -->
+<div class="view" id="view-profile">
+  <div class="topbar">
+    <div class="topbar-logo"><span class="logo-name">Profile</span></div>
+    <button class="icon-btn" data-theme-toggle aria-label="Toggle theme">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+  </div>
+
+  <div class="profile-header">
+    <div class="profile-avatar">D</div>
+    <div class="profile-name">Dhanumjaya Reddy</div>
+    <div class="profile-email">dhanumjaya@splitsmart.app</div>
+    <div style="display:flex;gap:var(--space-3);justify-content:center;margin-top:var(--space-4)">
+      <div style="text-align:center;padding:var(--space-3) var(--space-4);background:var(--color-surface-offset);border-radius:var(--radius-md)">
+        <div style="font-size:var(--text-lg);font-weight:800;color:var(--color-primary);font-family:var(--font-mono)">42</div>
+        <div style="font-size:10px;color:var(--color-text-muted);font-weight:600">Expenses</div>
+      </div>
+      <div style="text-align:center;padding:var(--space-3) var(--space-4);background:var(--color-surface-offset);border-radius:var(--radius-md)">
+        <div style="font-size:var(--text-lg);font-weight:800;color:var(--color-gold);font-family:var(--font-mono)">2,450</div>
+        <div style="font-size:10px;color:var(--color-text-muted);font-weight:600">Points</div>
+      </div>
+      <div style="text-align:center;padding:var(--space-3) var(--space-4);background:var(--color-surface-offset);border-radius:var(--radius-md)">
+        <div style="font-size:var(--text-lg);font-weight:800;color:var(--color-success);font-family:var(--font-mono)">🔥8</div>
+        <div style="font-size:10px;color:var(--color-text-muted);font-weight:600">Streak</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:var(--space-5)">
+    <div class="info-box-title" style="margin-bottom:var(--space-3)">💳 Payment Behavior Score</div>
+    <div class="card" style="margin-bottom:var(--space-5)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3)">
+        <span style="font-size:var(--text-sm);font-weight:600">Your Score</span>
+        <span style="font-size:var(--text-xl);font-weight:800;color:var(--color-success);font-family:var(--font-mono)">786</span>
+      </div>
+      <div class="progress-bar" style="height:10px"><div class="progress-fill" style="width:78.6%;background:linear-gradient(90deg,var(--color-success),var(--color-teal))"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:var(--space-2);font-size:10px;color:var(--color-text-faint)">
+        <span>Poor (300)</span><span>Good (700)</span><span>Excellent (900)</span>
+      </div>
+    </div>
+
+    <div class="info-box-title" style="margin-bottom:var(--space-3)">⚙️ Settings</div>
+    <div class="settings-list">
+      <div class="settings-item">
+        <div class="settings-icon" style="background:var(--color-primary-light)"><i data-lucide="bell" style="width:18px;height:18px;color:var(--color-primary)"></i></div>
+        <div class="settings-item-info">
+          <div class="settings-item-title">Notifications</div>
+          <div class="settings-item-sub">Due reminders, payment alerts</div>
+        </div>
+        <i data-lucide="chevron-right" class="arrow"></i>
+      </div>
+      <div class="settings-item">
+        <div class="settings-icon" style="background:var(--color-success-light)"><i data-lucide="percent" style="width:18px;height:18px;color:var(--color-success)"></i></div>
+        <div class="settings-item-info">
+          <div class="settings-item-title">Interest Rates</div>
+          <div class="settings-item-sub">Customize late payment interest</div>
+        </div>
+        <i data-lucide="chevron-right" class="arrow"></i>
+      </div>
+      <div class="settings-item">
+        <div class="settings-icon" style="background:var(--color-gold-light)"><i data-lucide="star" style="width:18px;height:18px;color:var(--color-gold)"></i></div>
+        <div class="settings-item-info">
+          <div class="settings-item-title">Rewards Program</div>
+          <div class="settings-item-sub">Manage points & redemptions</div>
+        </div>
+        <i data-lucide="chevron-right" class="arrow"></i>
+      </div>
+      <div class="settings-item">
+        <div class="settings-icon" style="background:var(--color-teal-light)"><i data-lucide="shield" style="width:18px;height:18px;color:var(--color-teal)"></i></div>
+        <div class="settings-item-info">
+          <div class="settings-item-title">Security & Privacy</div>
+          <div class="settings-item-sub">Biometrics, 2FA, data</div>
+        </div>
+        <i data-lucide="chevron-right" class="arrow"></i>
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <div class="toggle-title">Auto-Pay from Wallet</div>
+        <div class="toggle-desc">Use wallet balance to pay before due date</div>
+      </div>
+      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <div class="toggle-title">Interest Alerts</div>
+        <div class="toggle-desc">Get notified 3 days before interest starts</div>
+      </div>
+      <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <div class="toggle-title">Early Pay Reminders</div>
+        <div class="toggle-desc">Remind me of bonus opportunities</div>
+      </div>
+      <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+    </div>
+  </div>
+</div>
+
+</div><!-- end phone-screen -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item active" id="nav-home" onclick="navigateTo('home')">
+    <i data-lucide="home" style="width:22px;height:22px"></i>
+    <span>Home</span>
+  </div>
+  <div class="nav-item" id="nav-groups" onclick="navigateTo('groups')">
+    <i data-lucide="users" style="width:22px;height:22px"></i>
+    <span>Groups</span>
+  </div>
+  <button class="nav-fab" onclick="navigateTo('add')" aria-label="Add expense">
+    <i data-lucide="plus" style="width:24px;height:24px"></i>
+  </button>
+  <div class="nav-item" id="nav-rewards" onclick="navigateTo('rewards')">
+    <i data-lucide="star" style="width:22px;height:22px"></i>
+    <span>Rewards</span>
+  </div>
+  <div class="nav-item" id="nav-profile" onclick="navigateTo('profile')">
+    <i data-lucide="user" style="width:22px;height:22px"></i>
+    <span>Profile</span>
+  </div>
+</div>
+
+<div class="phone-home-bar"><div class="home-bar-line"></div></div>
+</div><!-- end phone -->
+</div><!-- end app-wrapper -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-sheet" id="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i data-lucide="check-circle" style="width:18px;height:18px"></i>
+  <span id="toastMsg">Success!</span>
+</div>
+
+<script>
+// State
+let state = {
+  walletBalance: 4280,
+  points: 2450,
+  activeView: 'home'
+};
+
+// Init Lucide
+lucide.createIcons();
+
+// Navigation
+function navigateTo(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const el = document.getElementById('view-' + view);
+  const nav = document.getElementById('nav-' + view);
+  if (el) el.classList.add('active');
+  if (nav) nav.classList.add('active');
+  document.getElementById('mainScreen').scrollTop = 0;
+  state.activeView = view;
+  lucide.createIcons();
+}
+
+// Toast
+let toastTimer;
+function showToast(msg, type='success') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.style.background = type === 'error' ? 'var(--color-error)' : type === 'reward' ? 'var(--color-gold)' : 'var(--color-success)';
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// Modal
+function openModal(html) {
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('open');
+  lucide.createIcons();
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+function closeModalDirect() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// Confetti
+function confetti() {
+  const colors = ['#4f46e5','#7c3aed','#fbbf24','#16a34a','#ec4899','#0d9488'];
+  const phone = document.querySelector('.phone');
+  const rect = phone.getBoundingClientRect();
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    const size = Math.random() * 8 + 6;
+    c.style.cssText = `width:${size}px;height:${size+4}px;left:${rect.left + Math.random() * rect.width}px;top:${rect.top}px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*1.5+1}s;animation-delay:${Math.random()*0.5}s`;
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 2500);
+  }
+}
+
+// Add Expense
+function toggleChip(el) {
+  el.classList.toggle('selected');
+}
+function selectSplit(el) {
+  document.querySelectorAll('.split-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function updatePreview() {
+  const amt = parseFloat(document.getElementById('expenseAmount').value) || 0;
+  const selected = document.querySelectorAll('.friend-chip.selected').length || 1;
+  const total = selected + 1;
+  document.getElementById('previewTotal').textContent = '₹' + amt.toFixed(2);
+  document.getElementById('previewShare').textContent = '₹' + (amt / total).toFixed(2) + ` (1 of ${total})`;
+}
+function addExpense() {
+  const amt = parseFloat(document.getElementById('expenseAmount').value);
+  const desc = document.getElementById('expenseDesc').value;
+  if (!amt || !desc) { showToast('Please fill in amount and description', 'error'); return; }
+  closeModalDirect();
+  showToast('Expense added successfully!');
+  navigateTo('home');
+}
+
+// Wallet
+function openAddFunds() {
+  openModal(`
+    <div class="modal-title">💳 Add Funds to Wallet</div>
+    <div class="form-group">
+      <label class="form-label">Amount</label>
+      <div class="amount-input-wrap">
+        <span class="currency-sym">₹</span>
+        <input class="form-input" type="number" id="addAmt" placeholder="0.00">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+      ${[500,1000,2000,5000].map(a => `<button onclick="document.getElementById('addAmt').value=${a}" style="background:var(--color-surface-offset);border:1.5px solid var(--color-border);border-radius:var(--radius-md);padding:12px;font-size:var(--text-sm);font-weight:700;color:var(--color-text)">₹${a.toLocaleString()}</button>`).join('')}
+    </div>
+    <div class="info-box" style="margin-bottom:16px">
+      <div class="info-row"><span class="info-key">Bonus Points</span><span class="info-val success">+5 pts per ₹100 added</span></div>
+      <div class="info-row"><span class="info-key">Instant Credit</span><span class="info-val primary">Yes</span></div>
+    </div>
+    <button class="btn-primary" onclick="confirmAddFunds()">
+      <i data-lucide="zap" style="width:18px;height:18px"></i> Add Funds & Earn Points
+    </button>
+  `);
+}
+function confirmAddFunds() {
+  const amt = parseFloat(document.getElementById('addAmt').value);
+  if (!amt || amt < 1) { showToast('Enter a valid amount', 'error'); return; }
+  state.walletBalance += amt;
+  const ptsEarned = Math.floor(amt / 100) * 5;
+  state.points += ptsEarned;
+  document.getElementById('walletBalance').textContent = state.walletBalance.toLocaleString('en-IN');
+  document.getElementById('totalPoints').textContent = state.points.toLocaleString('en-IN') + ' pts';
+  document.getElementById('rewardPoints').textContent = state.points.toLocaleString('en-IN');
+  closeModalDirect();
+  confetti();
+  showToast(`₹${amt} added! +${ptsEarned} SmartPoints earned 🌟`, 'reward');
+}
+
+// Expense Detail
+function openExpenseDetail() {
+  openModal(`
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:3rem;margin-bottom:12px">🍕</div>
+      <div style="font-size:var(--text-xl);font-weight:800;margin-bottom:4px">Dinner at Farzi Café</div>
+      <div style="font-size:var(--text-2xl);font-weight:800;color:var(--color-error);font-family:var(--font-mono)">₹480</div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px">
+        <span class="due-badge badge-overdue">12 days overdue</span>
+        <span class="due-badge" style="background:var(--color-error-light);color:var(--color-error)">+₹5.76 interest</span>
+      </div>
+    </div>
+    <div class="info-box">
+      <div class="info-box-title">💸 Payment Breakdown</div>
+      <div class="info-row"><span class="info-key">Original Amount</span><span class="info-val">₹480.00</span></div>
+      <div class="info-row"><span class="info-key">Days Overdue</span><span class="info-val danger">12 days</span></div>
+      <div class="info-row"><span class="info-key">Interest Rate</span><span class="info-val danger">1.5% / day</span></div>
+      <div class="info-row"><span class="info-key">Interest Accrued</span><span class="info-val danger">₹5.76</span></div>
+      <div class="info-row"><span class="info-key">Total Due Now</span><span class="info-val danger">₹485.76</span></div>
+    </div>
+    <div class="info-box">
+      <div class="info-box-title">👥 Split Details</div>
+      <div class="info-row"><span class="info-key">Rahul owes you</span><span class="info-val success">₹480</span></div>
+      <div class="info-row"><span class="info-key">Paid by</span><span class="info-val primary">You (Dhanumjaya)</span></div>
+      <div class="info-row"><span class="info-key">Split with</span><span class="info-val">Rahul, Priya, Amit</span></div>
+    </div>
+    <div style="display:flex;gap:12px">
+      <button class="btn-success" style="flex:1" onclick="remindFriend()">
+        <i data-lucide="bell" style="width:16px;height:16px"></i> Send Reminder
+      </button>
+      <button class="btn-outline" style="flex:1" onclick="closeModalDirect()">
+        <i data-lucide="x" style="width:16px;height:16px"></i> Close
+      </button>
+    </div>
+  `);
+}
+function remindFriend() {
+  closeModalDirect();
+  showToast('Reminder sent to Rahul! 📱');
+}
+
+// Group Detail
+function openGroupDetail() {
+  openModal(`
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:2.5rem;margin-bottom:8px">🏠</div>
+      <div style="font-size:var(--text-xl);font-weight:800;margin-bottom:4px">Roommates</div>
+      <div style="font-size:var(--text-sm);color:var(--color-text-muted)">3 members • Created Jan 2025</div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot red"></div>
+        <div class="timeline-content">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="timeline-title">Monthly Rent — June</div>
+            <div class="timeline-amount" style="color:var(--color-error)">-₹1,360</div>
+          </div>
+          <div class="timeline-sub">Due Jun 30 • Interest starts in 5 days</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot gold"></div>
+        <div class="timeline-content">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="timeline-title">WiFi Bill — May (Paid Early!)</div>
+            <div class="timeline-amount" style="color:var(--color-gold)">+30 pts</div>
+          </div>
+          <div class="timeline-sub">Paid 3 days early • Earned bonus points</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot green"></div>
+        <div class="timeline-content">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="timeline-title">Electricity Bill — May</div>
+            <div class="timeline-amount" style="color:var(--color-success)">✓ Settled</div>
+          </div>
+          <div class="timeline-sub">All 3 members paid on time</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" style="margin-top:20px" onclick="closeModalDirect()">
+      <i data-lucide="plus" style="width:18px;height:18px"></i> Add Group Expense
+    </button>
+  `);
+}
+
+// Notifications
+function openNotifications() {
+  openModal(`
+    <div class="modal-title">🔔 Notifications</div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:var(--color-error-light)">
+        <i data-lucide="alert-triangle" style="width:16px;height:16px;color:var(--color-error)"></i>
+      </div>
+      <div class="activity-content">
+        <div class="activity-text"><strong>Rahul</strong> hasn't paid ₹480 — <strong>₹5.76 interest</strong> added (12 days overdue)</div>
+        <div class="activity-time">2 hours ago</div>
+      </div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:var(--color-gold-light)">
+        <i data-lucide="zap" style="width:16px;height:16px;color:var(--color-gold)"></i>
+      </div>
+      <div class="activity-content">
+        <div class="activity-text">💰 Pay <strong>Monthly Rent ₹1,360</strong> early and earn <strong>+80 pts + ₹27.20 cashback!</strong></div>
+        <div class="activity-time">5 hours ago</div>
+      </div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:var(--color-success-light)">
+        <i data-lucide="check-circle" style="width:16px;height:16px;color:var(--color-success)"></i>
+      </div>
+      <div class="activity-content">
+        <div class="activity-text"><strong>Priya</strong> paid you ₹560 for Goa Trip 🎉 <strong>+30 SmartPoints</strong> added to your wallet!</div>
+        <div class="activity-time">Yesterday</div>
+      </div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:var(--color-primary-light)">
+        <i data-lucide="star" style="width:16px;height:16px;color:var(--color-primary)"></i>
+      </div>
+      <div class="activity-content">
+        <div class="activity-text">🏆 You hit an <strong>8-payment streak!</strong> Unlock 500 bonus points at 10 streak.</div>
+        <div class="activity-time">2 days ago</div>
+      </div>
+    </div>
+  `);
+}
+
+// Redeem Reward
+function redeemReward(btn, name, pts) {
+  if (state.points < pts) { showToast('Not enough SmartPoints!', 'error'); return; }
+  state.points -= pts;
+  document.getElementById('rewardPoints').textContent = state.points.toLocaleString('en-IN');
+  document.getElementById('totalPoints').textContent = state.points.toLocaleString('en-IN') + ' pts';
+  btn.textContent = '✓ Done';
+  btn.disabled = true;
+  confetti();
+  showToast(`🎁 "${name}" redeemed successfully!`, 'reward');
+}
+
+// New Group
+function openNewGroup() {
+  openModal(`
+    <div class="modal-title">👥 Create New Group</div>
+    <div class="form-group">
+      <label class="form-label">Group Name</label>
+      <input class="form-input" type="text" placeholder="e.g. Goa Trip 2025">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Group Type</label>
+      <select class="form-select">
+        <option>🏠 Home</option>
+        <option>✈️ Trip</option>
+        <option>🍔 Food</option>
+        <option>🎮 Entertainment</option>
+        <option>💼 Work</option>
+        <option>📦 Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Interest Rate for Late Payments</label>
+      <select class="form-select">
+        <option>1.5% per day (default)</option>
+        <option>1% per day (lenient)</option>
+        <option>2% per day (strict)</option>
+        <option>No interest</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Grace Period</label>
+      <select class="form-select">
+        <option>3 days (recommended)</option>
+        <option>1 day</option>
+        <option>7 days</option>
+        <option>No grace period</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="closeModalDirect();showToast('Group created successfully! 🎉');">
+      <i data-lucide="plus" style="width:18px;height:18px"></i> Create Group
+    </button>
+  `);
+}
+
+// Dark mode toggle
+(function(){
+  const r = document.documentElement;
+  let d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  r.setAttribute('data-theme', d);
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-theme-toggle]');
+    if (!btn) return;
+    d = d === 'dark' ? 'light' : 'dark';
+    r.setAttribute('data-theme', d);
+    btn.innerHTML = d === 'dark'
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  });
+})();
+
+// Set default date for expense
+const d = new Date(); d.setDate(d.getDate() + 7);
+const input = document.getElementById('expenseDue');
+if (input) input.value = d.toISOString().split('T')[0];
+</script>
+</body>
+</html>
